@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import live.adabe.notesa.databinding.NoteItemBinding
 
-class NoteAdapter(private val notes: List<Note>, val clicker: (Note) -> Unit ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>(){
+class NoteAdapter(var notes: List<Note>, val clicker: (Note) -> Unit ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>(){
 
     inner class NoteViewHolder(private val binding: NoteItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindNote(note: Note){

@@ -1,8 +1,8 @@
 package live.adabe.notesa
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -34,28 +33,29 @@ class MainActivity : AppCompatActivity() {
             "notes_database"
         ).allowMainThreadQueries().build()
 
-        //instantiating viewMOdel
+        //instantiating viewModel
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getNotes(database)
 
+        //instantiate adapter with empty dataset
+        noteAdapter = NoteAdapter(listOf<Note>()) {
+            val intent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
+            intent.run {
+                putExtra("id", it.id)
+                putExtra("content", it.content)
+                putExtra("title", it.title)
+            }
+            startActivity(intent)
+        }
+        binding.notesRv.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = noteAdapter
+        }
+
         //observe live data from view model
-        viewModel.notesLiveData.observe(this, {notes ->
-
-            //creating adapter
-            noteAdapter = NoteAdapter(notes) {
-                val intent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
-                intent.run {
-                    putExtra("id", it.id)
-                }
-                startActivity(intent)
-            }
-
-//            refreshing recycler view
-
-            binding.notesRv.apply {
-                layoutManager = LinearLayoutManager(this@MainActivity)
-                adapter = noteAdapter
-            }
+        viewModel.notesLiveData.observe(this, { notes ->
+            noteAdapter.notes = notes
+            noteAdapter.notifyDataSetChanged()
         })
 
 
