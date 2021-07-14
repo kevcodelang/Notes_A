@@ -27,11 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //instantiating database
-        database = Room.databaseBuilder(
-            applicationContext,
-            NoteDatabase::class.java,
-            "notes_database"
-        ).allowMainThreadQueries().build()
+        database = NoteDatabase.getInstance(applicationContext)
 
         //instantiating viewModel
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
